@@ -1,0 +1,35 @@
+use TESAmerica
+
+Create PROCEDURE ObtenerVentasAcumuladasPorDepartamento
+  @FechaInicio VArchar(50),
+    @FechaFin VArchar(50)
+AS
+BEGIN
+    SELECT D.NOMBRE AS Departamento,
+           SUM(I.PRECIO * I.CANTIDAD) AS VentasAcumuladas
+    FROM PEDIDO P
+    INNER JOIN ITEMS I ON P.NUMPEDIDO = I.NUMPEDIDO
+    INNER JOIN CLIENTE C ON P.CLIENTE = C.CODCLI
+    INNER JOIN CIUDAD CI ON C.CIUDAD = CI.CODCIU
+    INNER JOIN DEPARTAMENTO D ON CI.DEPARTAMENTO = D.CODDEP
+    WHERE P.FECHA BETWEEN @FechaInicio AND @FechaFin
+    GROUP BY D.NOMBRE
+END
+
+
+
+CREATE PROCEDURE ObtenerComisionPorVendedor
+    @Mes INT,
+    @Anio INT
+AS
+BEGIN
+    SELECT V.CODVEND AS CodigoVendedor,
+           V.NOMBRE AS NombreVendedor,
+           SUM(I.PRECIO * I.CANTIDAD * 0.1) AS ComisionObtenida
+    FROM VENDEDOR V
+    INNER JOIN PEDIDO P ON V.CODVEND = P.VENDEDOR
+    INNER JOIN ITEMS I ON P.NUMPEDIDO = I.NUMPEDIDO
+    WHERE MONTH(P.FECHA) = @Mes AND YEAR(P.FECHA) = @Anio
+    GROUP BY V.CODVEND, V.NOMBRE
+END
+
