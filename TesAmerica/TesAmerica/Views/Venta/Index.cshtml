@@ -1,0 +1,75 @@
+﻿
+
+@using TesAmerica.LogicaNegocios.Dominio;
+
+<div class="text-center">
+    <h1 class="display-4">Acumulado</h1>
+</div>
+
+<div class="container text-center">
+
+    <div class="card shadow-lg mb-5 mt-5 bg-white rounded p-3">
+        <form id="formularioAcumulado">
+            <label for="fechaInicial">Fecha Inicial:</label>
+            <input type="date" id="fechaInicial" name="fechaInicial" placeholder="Fecha Inicial" />
+
+            <label for="fechaFinal">Fecha Final:</label>
+            <input type="date" id="fechaFinal" name="fechaFinal" placeholder="Fecha Final" />
+
+            <button type="button" id="enviarBtn">Enviar</button>
+        </form>
+    </div>
+
+    <!-- Tabla para mostrar los resultados -->
+    <div class="mt-4 card">
+        <table class="table table-bordered table-striped" id="tablaAcumulado" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Nombre Departamento</th>
+                    <th>Acumulado</th>
+                </tr>
+            </thead>
+            <tbody id="cuerpoTabla"></tbody>
+        </table>
+    </div>
+</div>
+<script>
+    document.getElementById("enviarBtn").addEventListener("click", function () {
+        var fechaInicial = document.getElementById("fechaInicial").value;
+        var fechaFinal = document.getElementById("fechaFinal").value;
+
+        var formData = new FormData();
+        formData.append("fechaInicial", fechaInicial);
+        formData.append("fechaFinal", fechaFinal);
+
+        fetch('/Venta/Acumulado', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                var cuerpoTabla = document.getElementById("cuerpoTabla");
+                cuerpoTabla.innerHTML = '';
+
+                if (data.length === 0) {
+                    cuerpoTabla.innerHTML = '<tr><td colspan="2">No tiene resultados disponibles</td></tr>';
+                } else {
+                    data.forEach(item => {
+                        cuerpoTabla.innerHTML += `
+                            <tr>
+                                <td>${item.nombreDepartamento}</td>
+                                <td>${item.acumulado}</td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                document.getElementById("tablaAcumulado").style.display = "table";
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+</script>
+
+

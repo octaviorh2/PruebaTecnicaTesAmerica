@@ -1,0 +1,35 @@
+﻿@using TesAmerica.LogicaNegocios.Dominio;
+
+
+@{
+    var Acumulado = ViewData["Acumulado"] as List<AcumuladoVenta>;
+}
+
+<div class="text-center">
+    <h1 class="display-4"> Acumulado</h1>
+</div>
+
+@if (ViewData["Acumulado"] != null && ((List<AcumuladoVenta>)ViewData["Acumulado"]).Count > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre Departamento</th>
+                <th>Acumulado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in (List<AcumuladoVenta>)ViewData["Acumulado"])
+            {
+                <tr>
+                    <td>@item.NombreDepartamento</td>
+                    <td>@item.Acumulado</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No se encontraron registros.</p>
+}

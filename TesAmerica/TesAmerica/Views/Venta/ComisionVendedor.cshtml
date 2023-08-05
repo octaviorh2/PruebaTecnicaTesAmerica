@@ -1,0 +1,72 @@
+﻿@using TesAmerica.LogicaNegocios.Dominio;
+
+<div class="text-center">
+    <h1 class="display-4">Consion  x Vendedor</h1>
+</div>
+
+<div class="container text-center">
+
+    <div class="card shadow-lg mb-5 mt-5 bg-white rounded p-3">
+        <form id="formularioComision">
+            <label for="fechaInicial">Fecha</label>
+            <input type="date" id="fecha" name="fecha" placeholder="Fecha Inicial" />
+
+            <button type="button" id="enviarBtn">Enviar</button>
+        </form>
+    </div>
+    <!-- Tabla para mostrar los resultados -->
+    <div class="mt-4 card">
+        <table class="table table-bordered table-striped" id="tablaAcumulado" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Codigo Vendedor</th>
+                    <th>Nombre </th>
+                    <th>Comision </th>
+                </tr>
+            </thead>
+            <tbody id="cuerpoTabla"></tbody>
+        </table>
+    </div>
+
+
+</div>
+
+<script>
+    document.getElementById("enviarBtn").addEventListener("click", function () {
+        var fecha = document.getElementById("fecha").value;
+
+        var formData = new FormData();
+        formData.append("fecha", fecha);
+       
+
+        fetch('/Venta/Comision', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                var cuerpoTabla = document.getElementById("cuerpoTabla");
+                cuerpoTabla.innerHTML = '';
+
+                if (data.length === 0) {
+                    cuerpoTabla.innerHTML = '<tr><td colspan="2">No tiene resultados disponibles</td></tr>';
+                } else {
+                    data.forEach(item => {
+                        cuerpoTabla.innerHTML += `
+                                <tr>
+                                        <td>${item.codvend}</td>
+                                        <td>${item.nombre}</td>
+                                            <td>${item.comision}</td>
+
+                                </tr>
+                            `;
+                    });
+                }
+
+                document.getElementById("tablaAcumulado").style.display = "table";
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+</script>
